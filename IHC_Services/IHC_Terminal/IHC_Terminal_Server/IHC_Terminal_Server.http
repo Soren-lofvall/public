@@ -1,0 +1,6 @@
+@IHC_Terminal_Server_HostAddress = http://localhost:5073
+
+GET {{IHC_Terminal_Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
