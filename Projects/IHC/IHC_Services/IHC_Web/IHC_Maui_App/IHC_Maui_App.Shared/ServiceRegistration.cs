@@ -16,25 +16,25 @@ public static class ServiceRegistration
     {
         services.AddHttpClient<IIHCTerminalsController, IHCTerminalsController>(client =>
         {
-            client.BaseAddress = new Uri(configuration.GetValue<string>("IHCControllerUrl", "https://localhost:6000"));
+            client.BaseAddress = new Uri(configuration.GetValue<string>("IHCWebApiUrl", "https://localhost:6001"));
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // optional settings
             client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestVersion = new Version(1, 0);
             client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
-        })
-        .AddStandardResilienceHandler().Configure(options =>
-        {
-            options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(60);
-            options.Retry.MaxRetryAttempts = 5;
-            options.Retry.Delay = TimeSpan.Zero;
-            options.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(30);
-            options.CircuitBreaker.MinimumThroughput = 5;
-            options.CircuitBreaker.FailureRatio = 0.9;
-            options.CircuitBreaker.BreakDuration = TimeSpan.FromSeconds(30);
-            options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(10);
-        }); ;
+        });
+        //.AddStandardResilienceHandler().Configure(options =>
+        //{
+        //    options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(60);
+        //    options.Retry.MaxRetryAttempts = 5;
+        //    options.Retry.Delay = TimeSpan.Zero;
+        //    options.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(30);
+        //    options.CircuitBreaker.MinimumThroughput = 5;
+        //    options.CircuitBreaker.FailureRatio = 0.9;
+        //    options.CircuitBreaker.BreakDuration = TimeSpan.FromSeconds(30);
+        //    options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(10);
+        //}); ;
 
         services.AddSingleton<IHCStatusHubService>();
 

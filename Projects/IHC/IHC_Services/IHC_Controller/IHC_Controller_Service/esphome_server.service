@@ -1,0 +1,10 @@
+﻿[Unit]
+Description=ESPHome_Server
+
+[Service]
+ExecStart=/home/pi/ESPHome/ESPHome_Server
+WorkingDirectory=/home/pi/ESPHome
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

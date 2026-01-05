@@ -1,0 +1,10 @@
+﻿[Unit]
+Description=IHC Controller Service
+
+[Service]
+ExecStart=/home/pi/IHC_Controller/IHC_Controller_Service
+WorkingDirectory=/home/pi/IHC_Controller
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

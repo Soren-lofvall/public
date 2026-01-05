@@ -23,7 +23,7 @@ public class IHCStatusHubService : IAsyncDisposable
         if (hubConnection != null)
             return;
 
-        var baseUrl = new Uri(configuration.GetValue<string>("IHCControllerUrl", "https://localhost:6000"));
+        var baseUrl = new Uri(configuration.GetValue<string>("IHCControllerUrl", "https://localhost:6001"));
         var url = new Uri(baseUri: baseUrl, "/ihc_terminal_status_hub");
 
         hubConnection = new HubConnectionBuilder()
