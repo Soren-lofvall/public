@@ -1,0 +1,14 @@
+﻿%YAML 1.1
+---
+# Minimal ser2net V1 configuration (YAML-compliant enough for ser2net)
+define: &confver 1.0
+
+# Name this connection "con1"
+connection: &con1
+  accepter: tcp,2000
+  connector: serialdev,/dev/ttyUSB0,19200n81,local
+
+connection: &con2
+  accepter: tcp,2001
+  connector: serialdev,/dev/ttyS0,9600n81,local
+

@@ -1,0 +1,44 @@
+name: Publish Dotnet Package (NuGet)
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write  # enable GitHub OIDC token issuance for this job
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Build .NET project
+        run: dotnet build XtermBlazor -c Release
+
+      - name: Create the package
+        run: dotnet pack XtermBlazor -c Release
+
+      # Get a short-lived NuGet API key
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }} # Recommended: use a secret like ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
+
+      # Push the package
+      - name: NuGet push
+        run: dotnet nuget push XtermBlazor/bin/Release/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

@@ -1,0 +1,48 @@
+﻿@using IHCShared
+@using IHC_Maui_App.Shared.Services
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.Extensions.Configuration
+
+@page "/"
+@inject IIHCTerminalsController ihcController
+@inject IConfiguration configuration 
+
+<PageTitle>IHC Terminals Controller</PageTitle>
+@if (inputModules == null || outputModules == null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    @foreach (var module in inputModules)
+    {
+        <IHCModule Module="@module"/>
+    }
+
+    @foreach (var module in outputModules)
+    {
+        <IHCModule Module="@module" />
+    }
+}
+
+@code{
+    IEnumerable<IHCShared.IHCModule>? inputModules = null;
+    IEnumerable<IHCShared.IHCModule>? outputModules = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender && inputModules == null && outputModules == null)
+        {
+            inputModules = await ihcController.GetAllInputModules();
+            outputModules = await ihcController.GetAllOutputModules();
+            StateHasChanged();
+        }
+
+    }
+}

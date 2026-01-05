@@ -1,0 +1,38 @@
+name: Publish Dotnet Package (GPR)
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10
+          source-url: https://nuget.pkg.github.com/BattlefieldDuck/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Build .NET project
+        run: dotnet build XtermBlazor -c Release
+
+      - name: Create the package
+        run: dotnet pack XtermBlazor -c Release
+
+      - name: Publish the package to GPR
+        run: dotnet nuget push XtermBlazor/bin/Release/*.nupkg

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="IHC_Controller_Service/IHC_Controller_Service.csproj" />
+  <Project Path="IHC_Controller_TestProject/IHC_Controller_TestProject.csproj" />
+</Solution>
