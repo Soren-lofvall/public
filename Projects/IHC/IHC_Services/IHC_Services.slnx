@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/ESPHome/">
+    <Project Path="ESPHome/ESPHome_Server/ESPHome_Server.csproj" Id="52224c30-22f4-4cd2-9f5e-30bbec478dcf" />
+  </Folder>
+  <Folder Name="/IHC_Controller/">
+    <Project Path="IHC_Controller/IHC_Controller_Service/IHC_Controller_Service.csproj" />
+  </Folder>
+  <Folder Name="/IHC_Terminal/">
+    <Project Path="IHC_Terminal/IHC_Terminal_Client/IHC_Terminal_Client.csproj" Id="8083b645-f412-467b-b753-f19f6dac0565">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/IHC_Web/">
+    <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App.Shared/IHC_Maui_App.Shared.csproj" Id="d8ecb5ed-4be5-4711-95bd-fcd2f33cb586" />
+    <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App.Web/IHC_Maui_App.Web.csproj" Id="a4e45fe7-af94-4c46-9088-f93886fe9ff8" />
+    <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App/IHC_Maui_App.csproj" Id="5a11b863-e1a0-4668-8438-b9b574b9f77f">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
+    <Project Path="IHC_Web/IHC_WebApi/IHC_WebApi.csproj" Id="7cf62f37-8cc8-4289-bc29-21b3e5a5d9f5" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="../../Utilities/Utilities.csproj" Id="b6bece02-62b1-4018-830d-33a312e3fb3d" />
+  <Project Path="IHCShared/IHCShared.csproj" Id="3f287191-645b-4c41-b96c-f962ad42459a" />
+</Solution>
