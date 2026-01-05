@@ -15,49 +15,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      # OPTIONAL: Build your .NET/Blazor/MAUI project
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Build project
-        run: dotnet publish src/YourProject.csproj -c Release -o build_output
-
       # Copy only the files/folders you want public
       - name: Prepare export folder
         run: |
-          mkdir export
-          cp -r docs export/
-          cp -r build_output export/
-          cp README.md export/
+          mkdir Projects
+          cp IHC/IHC_Services -r Projects/
 
       # Push to public repo
       - name: Push to public repo
         uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.PUBLIC_REPO_DEPLOY_KEY }}
-          external_repository: yourusername/your-public-repo
+          external_repository: Soren-lofvall/public
           publish_branch: main
-          publish_dir: export
-
-      # OPTIONAL: Publish GitHub Pages from public repo
-      - name: Publish GitHub Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          deploy_key: ${{ secrets.PUBLIC_REPO_DEPLOY_KEY }}
-          external_repository: yourusername/your-public-repo
-          publish_branch: gh-pages
-          publish_dir: export/docs
-
-      # OPTIONAL: Create a Release with artifacts
-      - name: Upload Release Artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ github.run_number }}
-          name: Automated Release ${{ github.run_number }}
-          files: |
-            build_output/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Projects
