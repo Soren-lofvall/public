@@ -1,0 +1,145 @@
+﻿@using IHCShared
+@using IHC_Maui_App.Shared.Services
+@using System.Threading.Tasks
+@using System.ComponentModel.DataAnnotations
+@implements IDisposable
+@inject IHCStatusHubService ihcHubService
+
+@inject IIHCTerminalsController ihcController
+
+<MudPaper Elevation="25">
+    <MudStack Row="true">
+        <MudText Typo="Typo.h6">@Module.ModuleType Module: @Module.ControllerNumber</MudText>
+        <MudSpacer />
+        <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudCollapse Expanded="_expanded">
+
+    <MudDataGrid @ref="@_dataGrid" T="IHCTerminal" ServerData="@ServerReload" MultiSelection="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.ControllerNumber" Title="Controller Number" />
+            <TemplateColumn CellClass="d-flex justify-end" Title="Status">
+                <CellTemplate Context="context"> @* Import to remember Context="context"*@
+                    <MudStack Row>
+                        <MudIconButton OnClick="() => TerminalClicked((IHCTerminal)context.Item)" 
+                            Color="@GetTerminalColor(context.Item)" 
+                            Icon="@GetTerminalIcon(context.Item)" 
+                            Size="Size.Medium" 
+                            StopPropagation="true" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudCollapse>
+<MudDivider DividerType="DividerType.FullWidth" />
+
+@code {
+    private MudDataGrid<IHCTerminal> _dataGrid = null!;
+
+    [Parameter]
+    public IHCShared.IHCModule Module { get; set; } = default!;
+
+    [Parameter]
+    public IEnumerable<IHCTerminal>? Terminals { get; set; }
+
+    bool _expanded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ihcHubService.OnTerminalStatusChanged += TerminalStatusChanged;
+        await ihcHubService.StartAsync();
+    }
+
+    private void TerminalStatusChanged(IHCTerminal terminal)
+    {
+        if (Module == null)
+            return;
+
+        if (terminal.ModuleNumber == Module.ControllerNumber && terminal.TerminalType == Module.ModuleType)
+        {
+            var term = Terminals?.Where(t => t.ControllerNumber == terminal.ControllerNumber);
+            term?.FirstOrDefault()?.State = terminal.State;
+
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private Task OnExpandCollapseClick()
+    {
+        _expanded = !_expanded;
+        if (_expanded)
+        {
+            _dataGrid.ReloadServerData();
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task<GridData<IHCTerminal>> ServerReload(GridState<IHCTerminal> state)
+    {
+        if (_expanded == false || Module == null)
+            return new GridData<IHCTerminal>() { TotalItems = 0, Items = new List<IHCTerminal>() };
+        
+        // call API
+        Terminals = await ihcController.GetTerminals(new TerminalsByTypeAndModuleNumberRequest
+        {
+            TerminalType = Module.ModuleType,
+            ModuleNumber = Module.ControllerNumber
+        });
+
+        var totalItems = Terminals.Count<IHCTerminal>();
+        return new()
+        {
+            TotalItems = totalItems,
+            Items = Terminals
+        };
+    }
+
+    private void TerminalClicked(IHCTerminal terminal)
+    {
+        if (terminal != null)
+        {
+            if (terminal.TerminalType == IHCType.Input)
+            {
+                ControllerNumberRequest request = new ControllerNumberRequest { ControllerNumber = terminal.ControllerNumber };
+                ihcController.ActivateInput(request).ConfigureAwait(false);
+            }
+            else
+            {
+                SetOutputStateRequest request = new SetOutputStateRequest { ControllerNumber = terminal.ControllerNumber, State = !terminal.State };
+                ihcController.SetOutputState(request).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private string GetTerminalIcon(IHCTerminal terminal)
+    {
+        if (terminal.TerminalType == IHCType.Input)
+            return Icons.Material.Filled.SmartButton;
+        else
+            return Icons.Material.Filled.Lightbulb;
+    }
+
+    private Color GetTerminalColor(IHCTerminal terminal)
+    {
+        if (terminal.State == false)
+            return Color.Error;
+        else
+            return Color.Success;
+    }
+
+    public void Dispose()
+    {
+        ihcHubService.OnTerminalStatusChanged -= TerminalStatusChanged;
+    }
+
+    private string GetTerminalLabelName(IHCTerminal terminal)
+    {
+        string labelName = terminal.TerminalType == 0 ? "Input " : "Output ";
+        labelName += terminal.ControllerNumber;
+        return labelName;
+    }
+}
