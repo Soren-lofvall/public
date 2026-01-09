@@ -10,8 +10,14 @@ I use a Raspberry Pi Zero 2W with Raspberry Pi OS Lite (64-bit) installed to run
 
 I'm using this adapter: [Amazon.de - RS-485 adapter](https://www.amazon.de/dp/B0FX2PTXQ7?ref=ppx_yo2ov_dt_b_fed_asin_title)\
 `USB to RS485/RS422 Converter Adapter with FT232RNL Chip Triple Protection Multi OS Compatible`
-### IMPORTANT: This tool is only tested on a IHC version 1 system.
+### IMPORTANT: This tool is only tested on an old IHC system.\
+It is the first version of the IHC system, the one without an ethernet RJ-45 interface, but only RS-232 on the front and RS-485 terminals on top.\
+My controller states that is is version 6.03 DK
+![Controller pic 1](Controller1.jpg)
+![Controller pic 2](Controller2.jpg)
+![Controller pic 3](Controller3.jpg)
 
+---
 # Building and installing
 The code is written in C# and requires .NET 10 or later to build and run.
 
@@ -33,6 +39,7 @@ This is a small test web application to control the IHC system via the Web API.
 
 I only use the IHC_Controller_Service and ESPHome_Server on the Raspberry Pi. That is all you need to make it work in Home Assistant using the ESPHome integration.
 
+---
 ### Copy to Linux
 Once the code has been build you must export it to a linux compatible format. This can be done with Visual Studio or via the command line:
 
@@ -41,18 +48,36 @@ I build the projects as self-contained, so that I don't have to manually install
 
 You can then copy the output files to your Raspberry Pi in your Home directory under two sub directories like "ESPHome" and "IHC_Controller".
 
-### Install as a service
+---
+### Ser2Net
+By default the services communicate with the IHC system via the Ser2Net service.\
+This means you must install and configure Ser2Net on your Raspberry Pi to use the USB to RS-485 adapter.\
+In the IHC_Controller_Service folder you will find a file named "ser2net.yaml" that you can use as a template to configure Ser2Net.\
+Edit the configuration for Ser2Net and paste the content of the file in. Use the command:\
+```sudo nano /etc/ser2net.yaml```
 
+Restart Ser2Net with:\
+```sudo systemctl restart ser2net```
+
+Use this command to check that Ser2Net is running:\
+```sudo systemctl status ser2net```
+
+#### Why do I use Ser2Net?
+Ser2Net is a simple service that exposes serial ports via TCP/IP. This means that the IHC_Controller_Service can connect to the IHC bus via TCP/IP instead of directly to the serial port.\
+Now I can run the IHC_Controller_Service in a container or on another machine if needed. Makes it easier to debug and test.
+
+---
+### Install the services
 On the Raspberry Pi you can create systemd service files to run the services in the background. I have added two files
 "esphome_server.service" and "ihc_controller_service.service" that you can use as a template.\
 
 Just copy them to "/etc/systemd/system/" and point them to the correct executable paths.\
 
 After copying the service files you can start them with:\
-```bash sudo systemctl start ihc_controller```\
-```bash sudo systemctl start esphome_server ```
+```sudo systemctl start ihc_controller```\
+```sudo systemctl start esphome_server ```
 
-
+---
 # Configuration
 The configuration files are in JSON format and must be placed in the same folder as the executable.
 - **`IHC_Controller_Service JSON:`**\
@@ -66,6 +91,7 @@ This can in general be left as is, but you can change the settings to match your
 - **`IHC_WebApi JSON:`**\
 This can in general be left as is, but you can change the settings to match your setup. The important part is to set the correct URL for the IHC_Controller_Service SignalR hub.
 
+---
 # Home Assistant integration
 To integrate the IHC system with Home Assistant you must use the ESPHome integration.\
 You just need to point the ESPHome integration to the ESPHome_Server running on the Raspberry Pi.\
@@ -77,5 +103,6 @@ Doing automations on Inputs is not great, since the communication with the IHC b
 
 I recommand doing automations on the changing outputs. E.g. when a light is turned on, you can turn on other lights or devices.
 
+---
 # Hope it works for you
 Try it out and see if it works for you. I have been using it for a while now and it works great for me.

@@ -6,14 +6,14 @@
     <Project Path="IHC_Controller/IHC_Controller_Service/IHC_Controller_Service.csproj" />
   </Folder>
   <Folder Name="/IHC_Terminal/">
-    <Project Path="IHC_Terminal/IHC_Terminal_Client/IHC_Terminal_Client.csproj" Id="8083b645-f412-467b-b753-f19f6dac0565">
-      <Build Solution="Debug|*" Project="false" />
-    </Project>
+    <Project Path="IHC_Terminal/IHC_Terminal_Client/IHC_Terminal_Client.csproj" Id="8083b645-f412-467b-b753-f19f6dac0565" />
   </Folder>
   <Folder Name="/IHC_Web/">
     <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App.Shared/IHC_Maui_App.Shared.csproj" Id="d8ecb5ed-4be5-4711-95bd-fcd2f33cb586" />
     <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App.Web/IHC_Maui_App.Web.csproj" Id="a4e45fe7-af94-4c46-9088-f93886fe9ff8" />
-    <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App/IHC_Maui_App.csproj" Id="5a11b863-e1a0-4668-8438-b9b574b9f77f" />
+    <Project Path="IHC_Web/IHC_Maui_App/IHC_Maui_App/IHC_Maui_App.csproj" Id="5a11b863-e1a0-4668-8438-b9b574b9f77f">
+      <Deploy Solution="Debug|*" />
+    </Project>
     <Project Path="IHC_Web/IHC_WebApi/IHC_WebApi.csproj" Id="7cf62f37-8cc8-4289-bc29-21b3e5a5d9f5" />
   </Folder>
   <Folder Name="/Solution Items/">

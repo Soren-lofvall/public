@@ -34,18 +34,18 @@ namespace IHC_Terminal_Client
             Thread.CurrentThread.CurrentCulture = new CultureInfo("da-DK");
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("da-DK");
 
-            Console.Write("Hostname (zeropi): ");
+            Console.Write("Hostname (ihc-pi): ");
             string hostname = Console.ReadLine();
             if (string.IsNullOrEmpty(hostname))
             {
-                hostname = "zeropi";
+                hostname = "ihc-pi";
             }
 
-            Console.Write("Port (2000): ");
+            Console.Write("Port (2001): ");
             string port = Console.ReadLine();
             if (string.IsNullOrEmpty(port))
             {
-                port = "2000";
+                port = "2001";
             }
 
             var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -116,7 +116,7 @@ namespace IHC_Terminal_Client
         static void DataReaderThread(object inObject)
         {
             TcpClient? client = inObject as TcpClient;
-            if (client != null)
+            if (client == null)
                 return;
 
             BinaryReader reader = new(stream);
